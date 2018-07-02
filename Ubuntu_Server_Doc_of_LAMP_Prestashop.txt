@@ -1,0 +1,134 @@
+######################################################
+GUIDE to INSTALL LAMP Server and PRESTASHOP 1.7 
+######################################################
+Contents:
+---------
+	1. Installing Lamp server in local computer/server 
+	2. Download prestashop in designated folder
+	3. Open the Prestshop install folder in browser 
+	4. Resolving errors and givin access rights as sudo
+	5. Last Steps for safety  
+	6. Any Update please change in this section or addons
+
+1. Installing Lamp server in local computer/server : 
+----------------------------------------------------
+sudo apt-get update
+sudo apt-get install apache2
+sudo systemctl restart apache2
+sudo apt-get install mysql-server
+sudo apt-get install php libapache2-mod-php php-mcrypt php-mysql
+sudo systemctl restart apache2
+sudo systemctl status apache2
+sudo nano /var/www/html/info.php
+	->	<?php phpinfo(); ?>
+sudo apt-get install phpmyadmin apache2-utils
+
+	Resources
+	+++++++++
+	*For LAMP: https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-ubuntu-16-04
+	*For PMA: https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-phpmyadmin-on-ubuntu-12-04
+
+ 
+2. Download prestashop in designated folder in terminal :
+---------------------------------------------------------
+cd /../var/www/html/    
+	->	any specific folder in html
+wget https://download.prestashop.com/download/releases/prestashop_1.7.2.1.zip 
+	->	If any error takes place please update the 	Url
+unzip prestashop_1.7.2.1.zip
+mv prestashop_1.7.2.1  ps17
+	->	Renaming as ps17
+cd ps17 
+unzip prestashop
+	-> Which consists of main installation folder
+	
+	
+3. Open the Prestshop install folder in browser :
+-------------------------------------------------
+
+http://localhost/phpmyadmin
+	->	Use phpmyadmin for creating database as ps17_db.
+http://localhost/ps17/prestashop/install/
+	-> Open the presta shop install folder in browser
+
+	Now it rise errors because Presta Shop requiremts for Configuration
+		-> memory_limit to "128M" and upload_max_file_size to "16M" (or more if available)
+		-> Must-have PHP extensions: Mcrypt, OpenSSL, Zip, Curl, GD, PDO
+		-> Admin rights for prestashop folder
+
+
+4. Resolving errors and givin access rights as sudo :
+-----------------------------------------------------
+
+sudo apt-get install php7.0-zip 
+sudo apt-get install php7.0-intl
+sudo apt-get install php-curl
+sudo a2enmod rewrite
+sudo chown www-data:www-data -R /var/www/html/ps17/
+sudo nano /etc/php/7.0/apache2/php.ini
+	-> Modify these
+			upload_max_filesize = 16M
+			max_execution_time = 60
+			file_uploads = On
+			allow_url_fopen = On
+			magic_quotes_gpc = Off
+			register_globals = Off
+	-> Uncomment this in same file
+			;extension=php_intl.dll
+				to 
+			extension=php_intl.dll
+sudo service apache2 restart
+
+	Resources from 2to4 Steps:
+	++++++++++++++++++++++++++
+	https://www.prestashop.com/en/download
+	https://www.prestashop.com/en/system-requirements
+	http://www.leotheme.com/blog/prestashop/prestashop-1-7/548-how-to-configure-file-size-in-prestashop17.html
+	https://www.rosehosting.com/blog/how-to-install-prestashop-on-an-ubuntu-14-04-vps/
+	https://askubuntu.com/questions/443190/prestashop-recursive-write-permissions-error
+	http://idroot.net/linux/install-prestashop-ubuntu-16-04/
+	https://www.digitalocean.com/community/questions/how-to-install-zip-in-ubuntu
+	https://stackoverflow.com/questions/42243461/how-to-install-php-intl-extension-in-ubuntu-14-04
+	https://stackoverflow.com/questions/38800606/how-to-install-php-curl-in-ubuntu-16-04
+	https://www.digitalocean.com/community/tutorials/how-to-set-up-mod_rewrite-for-apache-on-ubuntu-14-04
+
+
+5. Last Steps for safety :
+-------------------------
+	When the install process is finished, we should configure some folder inside.
+		Folder “admin” will be changed admin… (Some character, we suggest that you may rename into admincp or something else)
+			-> I renamed it to ad17min
+	Folder “install” should be backup/rename/delete.
+			-> I deleted the folder 
+
+
+6. Any Update please change in this section or addons :
+-------------------------------------------------------
+	How to Know the version of  Ubuntu Version & LAMP:
+sudo lsb_release -a
+sudo apache2 -v
+sudo php -v
+sudo mysql -V
+
+
+
+
+https://www.prestashop.com/en/training
+https://www.fastcomet.com/tutorials/prestashop/changing-the-installation-folder
+https://www.youtube.com/watch?v=D7DN-nTEeJM
+https://www.templatemonster.com/help/prestashop-1-6-x-how-to-move-website-from-sub-directory-to-the-root-folder.html
+
+
+#######
+Addons:
+#######
+To remove the LAMP stack :
+-------------------------
+sudo apt-get purge mysql-server apache2 php
+
+Individual to purge: sudo apt-get purge php
+https://askubuntu.com/questions/447086/how-to-completely-remove-lamp-server-and-phpmyadmin
+
+A better of installing LAMP:
+----------------------------
+https://www.taniarascia.com/how-to-install-apache-php-7-1-and-mysql-on-ubuntu-with-vagrant/
